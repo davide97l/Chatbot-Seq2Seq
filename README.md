@@ -19,6 +19,7 @@ If you want to use the predefined dataset run the command:
 `-n` in the name of the new formatted dataset and `cl` is the location of the original corpus.
 
 2) **Train your model**
+
 Run the following command to train and evaluate your model and save it in a new `my_model` directory.
 ```
   python chatbot.py -mn "cornell_movie_dialogs_chatbot" -cl "data/cornell movie-dialogs corpus/formatted_movie_lines.txt -sd "my_model" -tr -ev
