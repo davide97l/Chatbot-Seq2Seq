@@ -7,6 +7,7 @@ import re
 import os
 import codecs
 from io import open
+import argparse
 
 
 def printLines(file, n=10):
@@ -106,9 +107,19 @@ def make_formatted_file(filename="formatted_movie_lines.txt", corpus="cornell mo
 
 
 if __name__ == '__main__':
+    """
+        python -n "formatted_movie_lines.txt" -cl "data/cornell movie-dialogs corpus"
+    """
+    ap = argparse.ArgumentParser()
+    ap.add_argument("-n", "--formatted_txt_name", type=str, required=True,
+                    help="name of the output formatted file (txt format)")
+    ap.add_argument("-cl", "--corpus_location", type=str, required=True,
+                    help="Directory where the input corpus is located")
+    args = vars(ap.parse_args())
 
-    corpus_location = "data/cornell movie-dialogs corpus"
-    new_filename = "formatted_movie_lines.txt"
+    corpus_location = args["corpus_location"]
+    new_filename = args["formatted_txt_name"]
 
     df = make_formatted_file(new_filename, corpus_location)
+    print("Corput formatted")
     printLines(df)

@@ -7,7 +7,7 @@ import argparse
 if __name__ == '__main__':
 
     """
-        python chatbot.py -mn "cornell_movie_dialogs_chatbot" -cl "data/cornell movie-dialogs corpus/formatted_movie_lines.txt" -ev
+        python chatbot.py -mn "cornell_movie_dialogs_chatbot" -cl "data/cornell movie-dialogs corpus/formatted_movie_lines.txt"
     """
     ap = argparse.ArgumentParser()
     ap.add_argument("-mn", "--model_name", type=str, required=True,
@@ -28,11 +28,11 @@ if __name__ == '__main__':
                     help="number of layers in the encoder")
     ap.add_argument("-dl", "--decoder_layers", type=int, default=2,
                     help="number of layers in the decoder")
-    ap.add_argument("-dr", "--dropout", type=float, default=0.2,
+    ap.add_argument("-dr", "--dropout", type=float, default=0.1,
                     help="dropout probability value (0 = no dropout)")
     ap.add_argument("-bs", "--batch_size", type=int, default=64,
                     help="batch size")
-    ap.add_argument("-msl", "--max_sentence_length", type=int, default=20,
+    ap.add_argument("-msl", "--max_sentence_length", type=int, default=10,
                     help="max length for a sentence to consider")
     ap.add_argument("-mwc", "--min_word_count", type=int, default=3,
                     help="remove rare words that appear in total less than min_count times")
@@ -46,7 +46,7 @@ if __name__ == '__main__':
                     help="decoder learning rate")
     ap.add_argument("-it", "--number_iterations", type=int, default=4000,
                     help="number of training iterations (1 batch per iteration")
-    ap.add_argument("-pi", "--print_iterations", type=int, default=1,
+    ap.add_argument("-pi", "--print_iterations", type=int, default=10,
                     help="number of iterations between each print")
     ap.add_argument("-si", "--save_iterations", type=int, default=1000,
                     help="number of iterations between each checkpoint")
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     if load_directory:
         embedding.load_state_dict(embedding_sd)
     # Initialize encoder & decoder models
-    encoder = EncoderRNN(hidden_size, embedding, encoder_n_layers, dropout)
+    encoder = EncoderRNN(embedding, hidden_size, encoder_n_layers, dropout)
     decoder = LuongAttnDecoderRNN(attn_model, embedding, hidden_size, voc.num_words, decoder_n_layers, dropout)
     if load_directory:
         encoder.load_state_dict(encoder_sd)
@@ -149,8 +149,10 @@ if __name__ == '__main__':
 
     if is_train:
         # Load batches for each iteration
+
         training_batches = [batch2TrainData(voc, [random.choice(pairs) for _ in range(batch_size)])
                             for _ in range(n_iterations)]
+
         print("Loaded batches")
 
         # Training initialization
@@ -175,8 +177,8 @@ if __name__ == '__main__':
             # Print progress
             if iteration % print_every == 0:
                 print("Iteration: {}; Progress: {:.4f}%; Average loss: {:.4f}".format(iteration,
-                                                                                              iteration / n_iterations * 100,
-                                                                                              total_loss / print_every))
+                                                                                      iteration / n_iterations * 100,
+                                                                                      total_loss / print_every))
                 total_loss = 0
 
             # Save checkpoint
@@ -219,8 +221,9 @@ if __name__ == '__main__':
                 # Evaluate sentence
                 output_words = evaluate(searcher, voc, input_sentence, max_length, device)
                 # Remove EOS and PADs
-                output_words = [x for x in output_words if not (x == 'EOS' or x == 'PAD')]
+                output_words[:] = [x for x in output_words if not (x == 'EOS' or x == 'PAD')]
                 print(display_name + ':', ' '.join(output_words))
 
             except KeyError:
                 print("Error: Encountered unknown word.")
+

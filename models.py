@@ -9,13 +9,11 @@ import torch.nn.functional as F
 
 
 class EncoderRNN(nn.Module):
-    def __init__(self, hidden_size=512, embedding=None, n_layers=1, dropout=0):
+    def __init__(self, embedding, hidden_size=512, n_layers=1, dropout=0):
         super(EncoderRNN, self).__init__()
         self.n_layers = n_layers  # number of layers (depth of the model)
         self.hidden_size = hidden_size  # layers size
         self.embedding = embedding
-        if not self.embedding:
-            self.embedding = nn.Embedding(voc.num_words, hidden_size)
 
         # Initialize BiGRU: the input_size and hidden_size params are both set to 'hidden_size'
         # because our input size is a word embedding with number of features == hidden_size.
@@ -38,7 +36,7 @@ class EncoderRNN(nn.Module):
         # Pack padded batch of sequences for RNN module
         packed = nn.utils.rnn.pack_padded_sequence(embedded, input_lengths)
         # Forward pass through GRU
-        outputs, hidden = self.gru(packed, hidden)
+        outputs, hidden = self.rnn(packed, hidden)
         # Unpack padding
         outputs, _ = nn.utils.rnn.pad_packed_sequence(outputs)
         # Sum bidirectional GRU outputs
@@ -100,14 +98,13 @@ class LuongAttnDecoderRNN(nn.Module):
 
         # Define layers
         self.embedding = embedding
-        if not self.embedding:
-            self.embedding = nn.Embedding(voc.num_words, hidden_size)
         self.embedding_dropout = nn.Dropout(dropout)
-        self.gru = nn.GRU(hidden_size, hidden_size, n_layers, dropout=(0 if n_layers == 1 else dropout))
         self.concat = nn.Linear(hidden_size * 2, hidden_size)
         self.out = nn.Linear(hidden_size, output_size)
 
         self.attn = Attn(attn_model, hidden_size)
+
+        self.gru = nn.GRU(hidden_size, hidden_size, n_layers, dropout=(0 if n_layers == 1 else dropout))
 
     def forward(self, input_step, last_hidden, encoder_outputs):
         """

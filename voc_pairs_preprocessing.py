@@ -168,7 +168,6 @@ def loadPrepareData(datafile, max_length=10, min_count=3):
         voc.addSentence(pair[0])
         voc.addSentence(pair[1])
     pairs = trimRareWords(voc, pairs, min_count)
-    print("Trimmed to {!s} sentence pairs".format(len(pairs)))
     print("Counted words:", voc.num_words)
     return voc, pairs
 
