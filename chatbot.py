@@ -89,7 +89,7 @@ if __name__ == '__main__':
     load_directory = args["load_directory"]
     # Load model if a loadFilename is provided
     if load_directory:
-        # If loading a model trained on GPU to CPU
+        # If loading a model
         checkpoint = torch.load(load_directory, map_location=torch.device(device))
         encoder_sd = checkpoint['en']
         decoder_sd = checkpoint['de']
