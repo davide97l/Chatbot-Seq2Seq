@@ -108,7 +108,7 @@ def make_formatted_file(filename="formatted_movie_lines.txt", corpus="cornell mo
 
 if __name__ == '__main__':
     """
-        python -n "formatted_movie_lines.txt" -cl "data/cornell movie-dialogs corpus"
+        python CMDC_data_preprocessing.py -n "formatted_movie_lines.txt" -cl "data/cornell movie-dialogs corpus"
     """
     ap = argparse.ArgumentParser()
     ap.add_argument("-n", "--formatted_txt_name", type=str, required=True,
