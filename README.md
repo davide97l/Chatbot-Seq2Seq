@@ -25,3 +25,7 @@ Run the following command to train and evaluate your model and save it in a new 
   python chatbot.py -mn "cornell_movie_dialogs_chatbot" -cl "data/cornell movie-dialogs corpus/formatted_movie_lines.txt -sd "my_model" -tr -ev
 ```
 Many more options are available such as setting the input size, learning rate, attention method, load a previous trained model, ecc. You can use the command `--help` to visualize them.
+
+## References
+
+- https://pytorch.org/tutorials/beginner/chatbot_tutorial.html
